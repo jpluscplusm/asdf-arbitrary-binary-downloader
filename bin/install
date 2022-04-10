@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# detect the tool name
+__dirname="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+tool="$(basename "$(dirname "${__dirname}")")"
+readonly __dirname
+readonly tool
+
+tar_path="$(cat ~/TOOLS.json | jq -r --arg t "$tool" '.v0[$t].tar_path')"
+bin_name="$(cat ~/TOOLS.json | jq -r --arg t "$tool" '.v0[$t].bin_name')"
+
+mkdir "$ASDF_INSTALL_PATH/bin"
+cd "$ASDF_INSTALL_PATH/bin"
+
+tar -x -z -f "$ASDF_DOWNLOAD_PATH/asdf-file-fetched-from-server" "$tar_path"
+chmod +x "$tar_path"
+if [ "$tar_path" != "$bin_name" ]; then
+  mv "$tar_path" "$bin_name"
+fi
+rmdir -p "$(dirname "$tar_path")" 2>/dev/null || true
