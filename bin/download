@@ -8,8 +8,6 @@ tool="$(basename "$(dirname "${__dirname}")")"
 readonly __dirname
 readonly tool
 
-url="$(cat ~/TOOLS.json | jq -r --arg t "$tool" '.v0[$t].url')"
-
 go_goos=$(uname -s)
 go_goarch=$(uname -m)
 if [ "$go_goarch" == "x86_64" ]; then
@@ -20,5 +18,5 @@ export VERSION="$ASDF_INSTALL_VERSION"
 export GO_GOOS_LC=$(printf "$go_goos" | tr '[:upper:]' '[:lower:]')
 export GO_GOARCH_LC=$(printf "$go_goarch" | tr '[:upper:]' '[:lower:]')
 
-curl --fail --silent --location -o "${ASDF_DOWNLOAD_PATH}/asdf-file-fetched-from-server" \
-  "$(printf "$url" | envsubst '$VERSION $GO_GOOS_LC $GO_GOARCH_LC')"
+url="$(cat ~/TOOLS.json | jq -r --arg t "$tool" '.v0[$t].url' | envsubst '$VERSION $GO_GOOS_LC $GO_GOARCH_LC')"
+curl --fail --silent --location -o "${ASDF_DOWNLOAD_PATH}/asdf-file-fetched-from-server" "$url"

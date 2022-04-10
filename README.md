@@ -30,8 +30,8 @@ tool's information inside the top-level `v0` key:
 }
 ```
 
-The `url` key's value can contain the following variables, referenced in
-shell-like `${FOO}` form:
+The `url`, `tar_file` and `bin_name` keys' value can contain the following
+variables, referenced in shell-like `${FOO}` form:
 
 - `VERSION`: the literal version of the tool that asdf has been asked to install
 - `GO_GOOS_LC`: the lowercase value of `uname -s`

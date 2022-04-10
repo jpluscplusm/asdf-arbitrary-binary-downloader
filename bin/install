@@ -8,8 +8,18 @@ tool="$(basename "$(dirname "${__dirname}")")"
 readonly __dirname
 readonly tool
 
-tar_path="$(cat ~/TOOLS.json | jq -r --arg t "$tool" '.v0[$t].tar_path')"
-bin_name="$(cat ~/TOOLS.json | jq -r --arg t "$tool" '.v0[$t].bin_name')"
+go_goos=$(uname -s)
+go_goarch=$(uname -m)
+if [ "$go_goarch" == "x86_64" ]; then
+   go_goarch="amd64"
+fi
+
+export VERSION="$ASDF_INSTALL_VERSION"
+export GO_GOOS_LC=$(printf "$go_goos" | tr '[:upper:]' '[:lower:]')
+export GO_GOARCH_LC=$(printf "$go_goarch" | tr '[:upper:]' '[:lower:]')
+
+tar_path="$(cat ~/TOOLS.json | jq -r --arg t "$tool" '.v0[$t].tar_path' | envsubst '$VERSION $GO_GOOS_LC $GO_GOARCH_LC')"
+bin_name="$(cat ~/TOOLS.json | jq -r --arg t "$tool" '.v0[$t].bin_name' | envsubst '$VERSION $GO_GOOS_LC $GO_GOARCH_LC')"
 
 mkdir "$ASDF_INSTALL_PATH/bin"
 cd "$ASDF_INSTALL_PATH/bin"
