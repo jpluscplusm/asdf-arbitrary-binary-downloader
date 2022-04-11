@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-set -Eeuo pipefail
-
 if [ "$ASDF_ACE_DEBUG" ]; then set -x; fi
+set -Eeuo pipefail
 
 # detect the tool name
 __dirname="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; readonly __dirname
