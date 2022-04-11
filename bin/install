@@ -6,11 +6,12 @@ set -Eeuo pipefail
 __dirname="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; readonly __dirname
 tool="$(basename "$(dirname "${__dirname}")")"; readonly tool
 
-go_goos=$(uname -s)
+go_goos=$(uname -s); readonly go_goos
 go_goarch=$(uname -m)
 if [ "$go_goarch" == "x86_64" ]; then
    go_goarch="amd64"
 fi
+readonly go_goarch
 
 VERSION="$ASDF_INSTALL_VERSION"; readonly VERSION; export VERSION
 GO_GOOS_LC=$(printf "%s" "$go_goos" | tr '[:upper:]' '[:lower:]'); readonly GO_GOOS_LC; export GO_GOOS_LC
