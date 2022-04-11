@@ -18,7 +18,7 @@ links in the chain of trust that you're relying on.
 
 ## Usage
 
-This tool is at version v0.0.0. This means its interface is liable to change
+This tool is at version v0.0.1. This means its interface is liable to change
 completely, as it's currently totally experimental.
 
 Well before v1.0.0 is released, however, a more stable interface will be
