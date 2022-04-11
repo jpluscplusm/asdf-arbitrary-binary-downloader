@@ -34,6 +34,7 @@ client: filesystem: {
 		contents: dagger.#FS
 		include: [
 			"bin/list-all",
+			"bin/download",
 		]
 	}
 }
