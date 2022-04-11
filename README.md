@@ -1,7 +1,8 @@
 # asdf-arbitrary-code-execution
 
-A plugin for the ASDF version manager that downloads arbitrary binaries that
-the user configures, and hands them to ASDF to version-switch.
+A plugin for the [ASDF version manager](https://asdf-vm.com/) that downloads
+arbitrary binaries _as configured by the user_, and hands them to ASDF to
+version-switch.
 
 NB This plugin's name is a "playful" reminder that the security model of ASDF
 is very much "buyer beware". ASDF requires you to trust plugin authors, as
