@@ -47,6 +47,7 @@ The `url`, `tar_file` and `bin_name` keys' value can contain the following
 variables, referenced in shell-like `${FOO}` form:
 
 - `VERSION`: the literal version of the tool that asdf has been asked to install
+- `UNAME_M_LC`: the lowercase value of `uname -m`
 - `GO_GOOS_LC`: the lowercase value of `uname -s`
 - `GO_GOARCH_LC`: the lowercase value of `uname -m`, but where `x86_64` => `amd64`
 

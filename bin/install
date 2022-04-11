@@ -13,8 +13,10 @@ if [ "$go_goarch" == "x86_64" ]; then
    go_goarch="amd64"
 fi
 readonly go_goarch
+uname_m=$(uname -m); readonly uname_m
 
 VERSION="$ASDF_INSTALL_VERSION"; readonly VERSION; export VERSION
+UNAME_M_LC=$(printf "%s" "$uname_m" | tr '[:upper:]' '[:lower:]'); readonly UNAME_M_LC; export UNAME_M_LC
 GO_GOOS_LC=$(printf "%s" "$go_goos" | tr '[:upper:]' '[:lower:]'); readonly GO_GOOS_LC; export GO_GOOS_LC
 GO_GOARCH_LC=$(printf "%s" "$go_goarch" | tr '[:upper:]' '[:lower:]'); readonly GO_GOARCH_LC; export GO_GOARCH_LC
 
