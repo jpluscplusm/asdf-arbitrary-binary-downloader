@@ -59,3 +59,19 @@ Then run:
 Note that this tool currently doesn't list remote versions, or know the
 latest/stable version that's available. *You need to know and specify the
 exact version that you want to install.*
+
+## Development & changes
+
+If you have examples of tools that can use this plugin, please PR them into the
+[examples/](examples/) directory as appropriate.
+
+To introduce new variables/features/etc, please:
+
+1. Install [Dagger](https://docs.dagger.io/1200/local-dev)
+   - Simply teach it about a Buildkit server with `BUILDKIT_HOST=`, if you'd
+     prefer Dagger not to use Docker to bootstrap one for you!
+1. Make changes, including tests
+   - I know how unwieldy and ugly the current tests are. They will change!
+1. Run `dagger do test`
+1. Fork, and push your changes to your fork
+1. Open a PR.
