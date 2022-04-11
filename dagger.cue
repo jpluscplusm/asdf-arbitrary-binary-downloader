@@ -16,7 +16,7 @@ actions: {
 			"bin/install",
 		]
 		test: {
-			for index, relative_file in #asdf_interface {
+			for relative_file in #asdf_interface {
 				"\(relative_file)": docker.#Run & {
 					input: shellcheck.container.image
 					mounts: project_root: {
