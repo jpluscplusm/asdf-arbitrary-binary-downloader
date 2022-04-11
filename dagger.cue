@@ -10,20 +10,24 @@ actions: {
 	//: Unit test the project
 	unit: shellcheck: {
 		container: docker.#Pull & {source: "koalaman/shellcheck-alpine:stable"}
-		test:      docker.#Run & {
-			input: shellcheck.container.image
-			mounts: project_root: {
-				dest:     "/mnt/" // ... the non -alpine shellcheck container defaults to this
-				type:     "fs"
-				contents: client.filesystem.".".read.contents
-			}
-			command: {
-				name: "/bin/shellcheck"
-				args: [
-					for file in client.filesystem.".".read.include {// .include must be files, not dirs
-						mounts.project_root.dest + file
-					},
-				]
+		#asdf_interface: [
+			"bin/list-all",
+			"bin/download",
+		]
+		test: {
+			for index, relative_file in #asdf_interface {
+				"\(relative_file)": docker.#Run & {
+					input: shellcheck.container.image
+					mounts: project_root: {
+						dest:     "/mnt/" // ... the non -alpine shellcheck container defaults to this
+						type:     "fs"
+						contents: client.filesystem.".".read.contents
+					}
+					command: {
+						name: "/bin/shellcheck"
+						args: [ mounts.project_root.dest + relative_file]
+					}
+				}
 			}
 		}
 	}
@@ -32,9 +36,6 @@ actions: {
 client: filesystem: {
 	".": read: {
 		contents: dagger.#FS
-		include: [
-			"bin/list-all",
-			"bin/download",
-		]
+		exclude: [ ".git", "cue.mod"]
 	}
 }
