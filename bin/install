@@ -1,12 +1,10 @@
 #!/usr/bin/env bash
 
-set -euo pipefail
+set -Eeuo pipefail
 
 # detect the tool name
-__dirname="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-tool="$(basename "$(dirname "${__dirname}")")"
-readonly __dirname
-readonly tool
+__dirname="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; readonly __dirname
+tool="$(basename "$(dirname "${__dirname}")")"; readonly tool
 
 go_goos=$(uname -s)
 go_goarch=$(uname -m)
@@ -14,12 +12,14 @@ if [ "$go_goarch" == "x86_64" ]; then
    go_goarch="amd64"
 fi
 
-export VERSION="$ASDF_INSTALL_VERSION"
-export GO_GOOS_LC=$(printf "$go_goos" | tr '[:upper:]' '[:lower:]')
-export GO_GOARCH_LC=$(printf "$go_goarch" | tr '[:upper:]' '[:lower:]')
+VERSION="$ASDF_INSTALL_VERSION"; readonly VERSION; export VERSION
+GO_GOOS_LC=$(printf "%s" "$go_goos" | tr '[:upper:]' '[:lower:]'); readonly GO_GOOS_LC; export GO_GOOS_LC
+GO_GOARCH_LC=$(printf "%s" "$go_goarch" | tr '[:upper:]' '[:lower:]'); readonly GO_GOARCH_LC; export GO_GOARCH_LC
 
-tar_path="$(cat ~/TOOLS.json | jq -r --arg t "$tool" '.v0[$t].tar_path' | envsubst '$VERSION $GO_GOOS_LC $GO_GOARCH_LC')"
-bin_name="$(cat ~/TOOLS.json | jq -r --arg t "$tool" '.v0[$t].bin_name' | envsubst '$VERSION $GO_GOOS_LC $GO_GOARCH_LC')"
+# shellcheck disable=SC2016
+tar_path="$(jq -r --arg t "$tool" '.v0[$t].tar_path' ~/TOOLS.json | envsubst '$VERSION $GO_GOOS_LC $GO_GOARCH_LC')"
+# shellcheck disable=SC2016
+bin_name="$(jq -r --arg t "$tool" '.v0[$t].bin_name' ~/TOOLS.json | envsubst '$VERSION $GO_GOOS_LC $GO_GOARCH_LC')"
 
 mkdir "$ASDF_INSTALL_PATH/bin"
 cd "$ASDF_INSTALL_PATH/bin"
