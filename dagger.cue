@@ -13,6 +13,7 @@ actions: {
 		#asdf_interface: [
 			"bin/list-all",
 			"bin/download",
+			"bin/install",
 		]
 		test: {
 			for index, relative_file in #asdf_interface {
