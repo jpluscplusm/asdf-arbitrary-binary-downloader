@@ -55,7 +55,7 @@ actions: test: {
 						input: debian.container.image
 						command: {
 							name: "/bin/bash"
-							args: [ "-xc", """
+							args: [ "-c", """
 								apt-get update
 								apt-get install curl git ca-certificates --no-install-recommends --no-install-suggests --assume-yes
 								""",
@@ -67,7 +67,7 @@ actions: test: {
 						input: asdf.dependencies.output
 						command: {
 							name: "/bin/bash"
-							args: [ "-xc", """
+							args: [ "-c", """
 								git config --add --global advice.detachedHead false
 								git clone https://github.com/asdf-vm/asdf.git $HOME/.asdf --branch v0.9.0
 								echo '. $HOME/.asdf/asdf.sh' >> $HOME/.bashrc
