@@ -1,6 +1,19 @@
-# asdf-arbitrary-binary-downloader
+# asdf-arbitrary-code-execution
 
-A plugin for the ASDF version manager that installs arbitrary binaries 
+A plugin for the ASDF version manager that downloads arbitrary binaries that
+the user configures, and hands them to ASDF to version-switch.
+
+NB This plugin's name is a "playful" reminder that the security model of ASDF
+is very much "buyer beware". ASDF requires you to trust plugin authors, as
+plugins execute code directly on your machine. This plugin goes one step
+further: **you must explicitly configure this plugin only to download
+binaries that you trust**. **The onus is on you, the user, to use only those
+binaries that you trust**. _This plugin cannot download binaries that you
+haven't **explicitly** told it about_.
+
+You should not use this plugin simply because someone tells you to. You should
+know what problem you're trying to solve by using it, and should understand the
+links in the chain of trust that you're relying on.
 
 ## Usage
 
@@ -39,7 +52,7 @@ variables, referenced in shell-like `${FOO}` form:
 
 Then run:
 
-1. `asdf plugin add tool_name_underscores_no_hyphens https://github.com/jpluscplusm/asdf-arbitrary-binary-downloader`
+1. `asdf plugin add tool_name_underscores_no_hyphens https://github.com/jpluscplusm/asdf-arbitrary-code-execution`
 1. `asdf install tool_name_underscores_no_hyphens some.version.number`
 
 Note that this tool currently doesn't list remote versions, or know the
