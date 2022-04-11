@@ -1,0 +1,9 @@
+{
+  "v0": {
+    "qrterminal": {
+      "url": "https://github.com/mdp/qrterminal/releases/download/v${VERSION}/qrterminal_${VERSION}_${GO_GOOS_LC}_${UNAME_M_LC}.tar.gz",
+      "tar_path": "qrterminal",
+      "bin_name": "qrterminal"
+    }
+  }
+}
