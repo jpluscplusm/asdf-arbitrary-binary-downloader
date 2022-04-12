@@ -14,27 +14,30 @@ dagger.#Plan
 actions: test: {
 	//# Run all the unit tests (use `dagger do test unit --help` for info about more deeply-nested tasks ...)
 	unit: {
+		#asdf_script_interface: [
+			"bin/list-all",
+			"bin/download",
+			"bin/install",
+		]
+
 		//# Use shellcheck to perform static analysis of the scripts in the defined ASDF interface
 		shellcheck: {
-			#asdf_interface: [
-				"bin/list-all",
-				"bin/download",
-				"bin/install",
-			]
-			container: docker.#Pull & {source: "koalaman/shellcheck-alpine:stable"}
+			_container: docker.#Pull & {source: "koalaman/shellcheck-alpine:stable"}
 			test: {
-				for relative_file in #asdf_interface {
-					(relative_file): docker.#Run & {
-						input: shellcheck.container.image
-						mounts: project_root: {
-							dest:     "/mnt/" // ... as per the non -alpine shellcheck image
-							type:     "fs"
-							contents: client.filesystem.".".read.contents
-						}
-						command: {
-							name: "/bin/shellcheck"
-							args: [ mounts.project_root.dest + relative_file]
-						}
+				for relative_file in #asdf_script_interface {
+					(relative_file): #ShellCheck & {_file_to_check: relative_file}
+				}
+				#ShellCheck: docker.#Run & {
+					_file_to_check: string
+					input:          shellcheck._container.image
+					mounts: project_root: {
+						dest:     "/mnt/" // ... as per the non -alpine shellcheck image
+						type:     "fs"
+						contents: client.filesystem.".".read.contents
+					}
+					command: {
+						name: "/bin/shellcheck"
+						args: [ mounts.project_root.dest + _file_to_check]
 					}
 				}
 			}
