@@ -24,7 +24,7 @@ actions: test: {
 			container: docker.#Pull & {source: "koalaman/shellcheck-alpine:stable"}
 			test: {
 				for relative_file in #asdf_interface {
-					"\(relative_file)": docker.#Run & {
+					(relative_file): docker.#Run & {
 						input: shellcheck.container.image
 						mounts: project_root: {
 							dest:     "/mnt/" // ... as per the non -alpine shellcheck image
