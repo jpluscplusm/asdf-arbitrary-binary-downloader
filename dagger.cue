@@ -37,7 +37,7 @@ actions: test: {
 					}
 					command: {
 						name: "/bin/shellcheck"
-						args: [ mounts.project_root.dest + _file_to_check]
+						args: [ "-x", mounts.project_root.dest + _file_to_check]
 					}
 				}
 			}

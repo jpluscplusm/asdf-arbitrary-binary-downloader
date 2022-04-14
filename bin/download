@@ -6,19 +6,19 @@ set -Eeuo pipefail
 __dirname="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; readonly __dirname
 tool="$(basename "$(dirname "${__dirname}")")"; readonly tool
 
-go_goos=$(uname -s); readonly go_goos
-go_goarch=$(uname -m)
-if [ "$go_goarch" == "x86_64" ]; then
-   go_goarch="amd64"
-fi
-readonly go_goarch
-uname_m=$(uname -m); readonly uname_m
+cd "$__dirname/vars/" # quick hack so we don't have to teach each script its location
+# shellcheck source-path=SCRIPTDIR
+. "$__dirname/vars/01-facts.sh"
+# shellcheck source-path=SCRIPTDIR
+. "$__dirname/vars/02-envvar-duplicates.sh"
+# shellcheck source-path=SCRIPTDIR
+. "$__dirname/vars/50-transforms.sh"
+# shellcheck source-path=SCRIPTDIR
+. "$__dirname/vars/99-exports.sh"
 
-VERSION="$ASDF_INSTALL_VERSION"; readonly VERSION; export VERSION
-UNAME_M_LC=$(printf "%s" "$uname_m" | tr '[:upper:]' '[:lower:]'); readonly UNAME_M_LC; export UNAME_M_LC
-GO_GOOS_LC=$(printf "%s" "$go_goos" | tr '[:upper:]' '[:lower:]'); readonly GO_GOOS_LC; export GO_GOOS_LC
-GO_GOARCH_LC=$(printf "%s" "$go_goarch" | tr '[:upper:]' '[:lower:]'); readonly GO_GOARCH_LC; export GO_GOARCH_LC
+export exports
+envsubst_shell_format="$(printenv exports | sed 's/\</$/g')"
 
 # shellcheck disable=SC2016
-url="$(jq -r --arg t "$tool" '.v0[$t].url' ~/TOOLS.json | envsubst '$VERSION $GO_GOOS_LC $GO_GOARCH_LC $UNAME_M_LC')"
+url="$(jq -r --arg t "$tool" '.v0[$t].url' ~/TOOLS.json | envsubst "$envsubst_shell_format")"
 curl --fail --silent --location -o "${ASDF_DOWNLOAD_PATH}/asdf-file-fetched-from-server" "$url"
