@@ -105,8 +105,7 @@ actions: test: {
 									# It's probably worth shunting this all into bats at some point, but let's see how far we get without it.
 									asdf install qrterminal 2.0.1
 									asdf global qrterminal 2.0.1
-									cd "$(dirname "$(asdf which qrterminal)")"
-									md5sum --check $EXAMPLE/md5sum.txt
+									cat "$(asdf which qrterminal)" | md5sum --check $EXAMPLE/md5sum.txt
 									# FIXME: can't do stdout/stderr comparions, as something makes qrt inject its
 									# full path into its -v output. Fix later.
 									""",
