@@ -18,7 +18,7 @@ links in the chain of trust that you're relying on.
 
 ## Usage
 
-This tool is at version v0.0.1. This means its interface is liable to change
+This tool is at version v0.0.2. This means its interface is liable to change
 completely, as it's currently totally experimental.
 
 Well before v1.0.0 is released, however, a more stable interface will be
@@ -35,31 +35,47 @@ Populate a `~/TOOLS.json` file (NB this location WILL change) with 1 or more
 tool's information inside the top-level `v0` key:
 
 ```
-{ "v0": {
- "tool_name_underscores_no_hyphens": {
-  "url": "https://example.com/path/to/file/containing/${VERSION}/and/${GO_GOOS_LC}/and/${GO_GOARCH_LC}/vars.tgz"
-  "tar_file": "path/to/file/in/tarball"
-  "bin_name": "binary_filename_we_want_to_use_in_the_shell"
+{
+ "v0": {
+  "tool-name": {
+   "url": "https://example.com/path/to/file/containing/${V}/and/${GO_GOOS_LC}/and/${GO_GOARCH_LC}/vars.tgz"
+   "tar_file": "path/to/file/in/tarball"
+   "bin_name": "binary_filename_we_want_to_use_in_the_shell"
+  }
  }
 }
 ```
 
-The `url`, `tar_file` and `bin_name` keys' value can contain the following
-variables, referenced in shell-like `${FOO}` form:
+The `url`, `tar_file` and `bin_name` keys' value can contain variables,
+referenced in shell-like `${FOO}` form. The set of valid variables is found in
+[bin/vars/99-exports](bin/vars/99-exports). The names are currently "obvious"
+enough that they're not documented. This will change as people (you?!) PR more
+interesting "facts", "transforms" and "exports", and their complexity
+increases.
 
-- `VERSION`: the literal version of the tool that asdf has been asked to install
-- `UNAME_M_LC`: the lowercase value of `uname -m`
-- `GO_GOOS_LC`: the lowercase value of `uname -s`
-- `GO_GOARCH_LC`: the lowercase value of `uname -m`, but where `x86_64` => `amd64`
+All variables have `.._UC` and `.._LC` variants, representing all-upper-case
+and all-lower-case strings respectively.
 
-Then run:
+The variable `V` (and its `V_LC`/`V_UC`) variants contains the literal version
+of the tool that asdf has been asked to install. It should (*must*!) be present
+in the `url` key, because the TOOLS.json file is *not* the arbiter of *which*
+version ASDF will install - ASDF is in charge of that. The TOOLS.json file
+teachs ASDF, via this plugin, *how* to download DIFFERENT versions. If the
+version is hardcoded in TOOLS.json then ... what's the point?
 
-1. `asdf plugin add tool_name_underscores_no_hyphens https://github.com/jpluscplusm/asdf-arbitrary-code-execution`
-1. `asdf install tool_name_underscores_no_hyphens some.version.number`
+After seeding TOOLS.json with the information about the tool you want to install,
 
-Note that this tool currently doesn't list remote versions, or know the
-latest/stable version that's available. *You need to know and specify the
-exact version that you want to install.*
+- `asdf plugin add tool-name https://github.com/jpluscplusm/asdf-arbitrary-code-execution`
+- `asdf install tool-name some.version.number`
+
+... and then maybe
+
+- `asdf global tool-name some.version.number`.
+
+`some.version.number` in both the commands, above, **is where you tell ASDF
+which version you want to install**. Currently, this tool doesn't list remote
+versions, or know the latest/stable version that's available. *You need to know
+and specify the exact version that you want to install.*
 
 ## Development & changes
 
@@ -72,7 +88,6 @@ To introduce new variables/features/etc, please:
    - Simply teach it about a Buildkit server with `BUILDKIT_HOST=`, if you'd
      prefer Dagger not to use Docker to bootstrap one for you!
 1. Make changes, including tests
-   - I know how unwieldy and ugly the current tests are. They will change!
 1. Run `dagger do test`
 1. Fork, and push your changes to your fork
 1. Open a PR.
