@@ -1,0 +1,9 @@
+{
+  "v0": {
+    "hurl": {
+      "url": "https://github.com/Orange-OpenSource/hurl/releases/download/${V}/hurl-${V}-x86_64-${GO_GOOS_LC}.tar.gz",
+      "tar_path": "hurl-${V}/hurl",
+      "bin_name": "hurl"
+    }
+  }
+}
