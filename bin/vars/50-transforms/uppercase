@@ -2,7 +2,7 @@ declare -x fact
 declare -x name
 declare -x value
 
-for fact in "$facts"; do
+for fact in $facts; do
     name="${fact}_uc"
     value="$(printenv "$fact" | tr '[:lower:]' '[:upper:]')"
     declare -xr $name="$value"
