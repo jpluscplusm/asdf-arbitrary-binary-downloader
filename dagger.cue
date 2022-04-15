@@ -45,11 +45,12 @@ actions: test: {
 			steps: [
 				docker.#Run & {
 					input: actions._dockerhub.debian.image
+					env: DEBIAN_FRONTEND: "noninteractive"
 					command: {
 						name: "/bin/bash"
 						args: [ "-c", """
-								apt-get update
-								apt-get install --no-install-recommends --no-install-suggests --assume-yes \\
+								apt-get -q update
+								apt-get -q install -o=Dpkg::Use-Pty=0 --no-install-recommends --no-install-suggests --assume-yes \\
 									curl \\
 									git \\
 									ca-certificates
@@ -69,9 +70,10 @@ actions: test: {
 						"curl",         // curl
 						"jq",           // jq
 					]
+					env: DEBIAN_FRONTEND: "noninteractive"
 					command: {
 						name: "apt-get"
-						args: [ "install", "--assume-yes", "--no-install-recommends", "--no-install-suggests"] + _packages
+						args: [ "-q", "install", "-o=Dpkg::Use-Pty=0", "--assume-yes", "--no-install-recommends", "--no-install-suggests"] + _packages
 					}
 				},
 			]
@@ -168,7 +170,7 @@ actions: test: {
 									# FIXME: the rest of this is bad, and in the wrong place
 									export EXAMPLE=\(mounts.project_root.dest)/examples/hurl
 									cp $EXAMPLE/TOOLS.json ~/TOOLS.json
-									apt-get install libxml2 libicu67 --no-install-suggests --no-install-recommends # ew
+									DEBIAN_FRONTEND=noninteractive apt-get -q install libxml2 libicu67 -o=Dpkg::Use-Pty=0 --no-install-suggests --no-install-recommends # ew
 									# This vvv line vvv *is* the test. ^^^ that ^^^ is setup, and lines +2 onwards are results checking
 									# It's probably worth shunting this all into bats at some point, but let's see how far we get without it.
 									asdf install hurl 1.6.1

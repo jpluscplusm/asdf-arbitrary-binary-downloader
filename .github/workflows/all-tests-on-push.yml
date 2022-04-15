@@ -10,4 +10,4 @@ jobs:
       - name: Run all tests
         uses: dagger/dagger-for-github@v2
         with:
-          args: do test --log-format plain
+          cmds: do test --log-format plain
