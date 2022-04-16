@@ -7,19 +7,19 @@ version-switch.
 NB This plugin's name is a "playful" reminder that the security model of ASDF
 is very much "buyer beware". ASDF requires you to trust plugin authors, as
 plugins execute code directly on your machine. This plugin goes one step
-further: **you must explicitly configure this plugin only to download
-binaries that you trust**. **The onus is on you, the user, to use only those
-binaries that you trust**. _This plugin cannot download binaries that you
-haven't **explicitly** told it about_.
+further: **you must explicitly configure this plugin only to download binaries
+that you trust**. **The onus is on you, the user, to use only those binaries
+that you trust**. _This plugin cannot download binaries that you haven't
+**explicitly** told it about_.
 
 You should not use this plugin simply because someone tells you to. You should
 know what problem you're trying to solve by using it, and should understand the
 links in the chain of trust that you're relying on.
 
-## Usage
+## Using this plugin
 
-This tool is at version v0.0.2. This means its interface is liable to change
-completely, as it's currently totally experimental.
+This tool is at version v0.0.3. This means its interface is liable to change,
+as it's currently pretty experimental.
 
 Well before v1.0.0 is released, however, a more stable interface will be
 iterated towards.
@@ -28,42 +28,78 @@ The current version is able to install binaries that are found in compressed
 tarballs that curl is able to fetch. Only 1 binary per remote tarball is
 currently supported.
 
-The following will allow for a single binary from a gzipped tarball to be
+### Pre-requisites
+
+This plugin requires [the `cue`
+CLI](https://cuelang.org/docs/install/#install-cue-from-official-release-binaries)
+to be installed. I'm well aware of the irony of this plugin -- a tool to
+automate the installation of arbitrary binaries off the internet -- requiring
+its users to download a binary **manually** ... but this is the last one you
+should ever need to fetch!
+
+Make the `cue` CLI available in your `$PATH`, however you usually do that.
+
+### Configuration
+
+The following setup will allow for a single binary from a gzipped tarball to be
 installed.
 
-Populate a `~/TOOLS.json` file (NB this location WILL change) with 1 or more
-tool's information inside the top-level `v0` key:
+Populate a `~/.tool-sources.asdface.cue` file (NB this name & location is up
+for discussion) with 1 or more tool's information inside the top-level `v0` key
+("v0" reflects the unstable nature of this plugin, pre-1.0):
 
-```
-{
- "v0": {
-  "tool-name": {
-   "url": "https://example.com/path/to/file/containing/${V}/and/${GO_GOOS_LC}/and/${GO_GOARCH_LC}/vars.tgz"
-   "tar_file": "path/to/file/in/tarball"
-   "bin_name": "binary_filename_we_want_to_use_in_the_shell"
+```CUE
+package asdface
+
+v0: {
+ tools: {
+  tool_name: {
+   url: "https://example.com/path/to/file/containing/\(version.oc)/and/\(go.os.lc)/and/\(go.arch.uc)/vars.tgz"
+   tar_file: "path/to/file/in/tarball"
+   bin_name: "binary_filename_we_want_to_use_in_the_shell"
+  }
+  "tool-names-containing-hyphens-need-to-be-in-quotes": {
+   url: "https://example.com/path/to/file/containing/\(version.oc)/and/\(go.os.lc)/and/\(go.arch.uc)/vars.tgz"
+   tar_file: "path/to/file/in/tarball"
+   bin_name: "binary_filename_we_want_to_use_in_the_shell"
   }
  }
 }
 ```
 
 The `url`, `tar_file` and `bin_name` keys' value can contain variables,
-referenced in shell-like `${FOO}` form. The set of valid variables is found in
-[bin/vars/99-exports](bin/vars/99-exports). The names are currently "obvious"
-enough that they're not documented. This will change as people (you?!) PR more
-interesting "facts", "transforms" and "exports", and their complexity
-increases.
+referenced in [CUE's `\(variable)`
+form](https://cuelang.org/docs/tutorials/tour/expressions/interpolation/). The
+set of valid variable prefixes is currently:
 
-All variables have `.._UC` and `.._LC` variants, representing all-upper-case
-and all-lower-case strings respectively.
+- `version`: the literal version requested by the user
+- `uname.m`: the output of `uname -m`
+- `uname.s`: the output of `uname -s`
+- `go.os`:   the Go language's concept of the machine's running OS
+- `go.arch`: the output of `uname -m`, with `x86_64` changed to `amd64`, which (AFAICT?) matches Go's GOARCH concept. PR's very welcome!
 
-The variable `V` (and its `V_LC`/`V_UC`) variants contains the literal version
-of the tool that asdf has been asked to install. It should (*must*!) be present
-in the `url` key, because the TOOLS.json file is *not* the arbiter of *which*
-version ASDF will install - ASDF is in charge of that. The TOOLS.json file
-teachs ASDF, via this plugin, *how* to download DIFFERENT versions. If the
-version is hardcoded in TOOLS.json then ... what's the point?
+A letter-case modifier suffix is required for all references. For the identity
+modifier, which does not change any letter cases, use the `.oc` (original case)
+suffix. `.uc` and `.lc` suffixes are also available for upper- and lower-case,
+respectively.
 
-After seeding TOOLS.json with the information about the tool you want to install,
+For example, if the version string "v1.2.3" has been provided to the ASDF CLI,
+the following variables are available for use in the config file, to be
+interpolated at install-time:
+
+- `version.oc`: "v1.2.3"
+- `version.uc`: "V1.2.3"
+- `version.lc`: "v1.2.3"
+
+At least one variant of the `version` variable should (*must*!) be present in
+the `url` key, because the `~/.tool-sources.asdface.cue` file is *not* the
+arbiter of *which* version ASDF will install - ASDF is in charge of that. This
+config file teachs ASDF, via this plugin, **how** to download DIFFERENT
+versions.  If the version is hardcoded in the config then ... what's the point?
+
+After seeding the config file with the information about the tool you want to
+install, make sure you've [installed the CUE cli](#pre-requisites) (an easy,
+small, single-binary download!), and then run:
 
 - `asdf plugin add tool-name https://github.com/jpluscplusm/asdf-arbitrary-code-execution`
 - `asdf install tool-name some.version.number`

@@ -6,19 +6,13 @@ set -Eeuo pipefail
 __dirname="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; readonly __dirname
 tool="$(basename "$(dirname "${__dirname}")")"; readonly tool
 
-cd "$__dirname/vars/" # quick hack so we don't have to teach each script its location
-# shellcheck source-path=SCRIPTDIR
-. "$__dirname/vars/01-facts.sh"
-# shellcheck source-path=SCRIPTDIR
-. "$__dirname/vars/02-envvar-duplicates.sh"
-# shellcheck source-path=SCRIPTDIR
-. "$__dirname/vars/50-transforms.sh"
-# shellcheck source-path=SCRIPTDIR
-. "$__dirname/vars/99-exports.sh"
+if ! command -v cue >/dev/null; then
+    echo "FATAL: The asdf-ace plugin requires the CUE cli in order to operate, but it is not installed." >&2
+    echo "FATAL: Please install it from https://cuelang.org/docs/install/#download and try again." >&2
+    exit 1
+fi
 
-export exports
-envsubst_shell_format="$(printenv exports | sed 's/\</$/g')"
+config=("$HOME/.tool-sources.asdface.cue" "$__dirname/facts.cue")
 
-# shellcheck disable=SC2016
-url="$(jq -r --arg t "$tool" '.v0[$t].url' ~/TOOLS.json | envsubst "$envsubst_shell_format")"
+url="$(cue export -T -t uname_m="$(uname -m)" -t uname_s="$(uname -s)" -t version="$ASDF_INSTALL_VERSION" -e "v0.tools.\"$tool\".url" --out=text "${config[@]}")"
 curl --fail --silent --location -o "${ASDF_DOWNLOAD_PATH}/asdf-file-fetched-from-server" "$url"
