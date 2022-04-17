@@ -69,123 +69,67 @@ actions: test: {
 						]
 					}
 				},
-				docker.#Run & {
-					_packages: [
-						"coreutils", // env, uname, dirname, tr, basename, chmod, mv, rmdir, md5sum
-						"bash",      // bash
-						"tar",       // tar
-						"curl",      // curl
-					]
-					env: DEBIAN_FRONTEND: "noninteractive"
-					command: {
-						name: "apt-get"
-						args: [ "-q", "install", "-o=Dpkg::Use-Pty=0", "--assume-yes", "--no-install-recommends", "--no-install-suggests"] + _packages
-					}
-				},
 			]
 		}
 		examples: {
-			qrterminal: docker.#Run & {
-				input: system.build.output
-				mounts: {
-					project_root: {
-						dest:     "/project/"
-						type:     "fs"
-						contents: client.filesystem.".".read.contents
-					}
-				}
-				command: {
-					name: "/bin/bash"
-					//       -l enters bash's `login` startup flow, so that ~/.bashrc is sourced
-					args: [ "-lc", """
-						set -euo pipefail
-						cd \(mounts.project_root.dest)
-						# asdf needs local changes to be present in git commits, so we start from an empty repo and add everything
-						git init -b test_in_dagger >/dev/null
-						git add .
-						git -c user.email=t@example.com -c user.name=testing commit -m testing >/dev/null
-						#export ASDF_ACE_DEBUG=1
-						asdf plugin add qrterminal \(mounts.project_root.dest)
-						# FIXME: the rest of this is bad, and in the wrong place
-						export EXAMPLE=\(mounts.project_root.dest)/examples/qrterminal
-						cp $EXAMPLE/qrterminal.cue $HOME/.tool-sources.asdface.cue
-						# This vvv line vvv *is* the test. ^^^ that ^^^ is setup, and lines +2 onwards are results checking
-						# It's probably worth shunting this all into bats at some point, but let's see how far we get without it.
-						asdf install qrterminal 2.0.1
-						asdf global qrterminal 2.0.1
-						cat "$(asdf which qrterminal)" | md5sum --check $EXAMPLE/2.0.1.binary.md5sum
-						""",
-					]
-				}
+			hurl: #ExampleInstall & {
+				directory: "examples/hurl"
+				binary:    "hurl"
+				version:   "1.6.1"
+				debug:     false
 			}
-			hurl: docker.#Run & {
-				input: system.build.output
-				mounts: {
-					project_root: {
-						dest:     "/project/"
-						type:     "fs"
-						contents: client.filesystem.".".read.contents
-					}
-				}
-				command: {
-					name: "/bin/bash"
-					//       -l enters bash's `login` startup flow, so that ~/.bashrc is sourced
-					args: [ "-lc", """
-						set -euo pipefail
-						cd \(mounts.project_root.dest)
-						# asdf needs local changes to be present in git commits, so we start from an empty repo and add everything
-						git init -b test_in_dagger >/dev/null
-						git add .
-						git -c user.email=t@example.com -c user.name=testing commit -m testing >/dev/null
-						#export ASDF_ACE_DEBUG=1
-						asdf plugin add hurl \(mounts.project_root.dest)
-						# FIXME: the rest of this is bad, and in the wrong place
-						export EXAMPLE=\(mounts.project_root.dest)/examples/hurl
-						cp $EXAMPLE/hurl.cue $HOME/.tool-sources.asdface.cue
-						DEBIAN_FRONTEND=noninteractive apt-get -q install libxml2 libicu67 -o=Dpkg::Use-Pty=0 --no-install-suggests --no-install-recommends # ew
-						# This vvv line vvv *is* the test. ^^^ that ^^^ is setup, and lines +2 onwards are results checking
-						# It's probably worth shunting this all into bats at some point, but let's see how far we get without it.
-						asdf install hurl 1.6.1
-						asdf global hurl 1.6.1
-						cat "$(asdf which hurl)"         | md5sum --check $EXAMPLE/1.6.1.binary.md5sum
-						hurl --version | cut -f1-2 -d' ' | md5sum --check $EXAMPLE/1.6.1.version-output.truncated.md5sum
-						""",
-					]
-				}
+			qrterminal: #ExampleInstall & {
+				directory: "examples/qrterminal"
+				binary:    "qrterminal"
+				version:   "2.0.1"
+				debug:     false
 			}
-			honeyvent: docker.#Run & {
-				input: system.build.output
-				mounts: {
-					project_root: {
-						dest:     "/project/"
-						type:     "fs"
-						contents: client.filesystem.".".read.contents
+			honeyvent: #ExampleInstall & {
+				directory: "examples/honeyvent"
+				binary:    "honeyvent"
+				version:   "v1.1.0"
+				debug:     false
+			}
+			#ExampleInstall: {
+				directory: string // relative to repo root
+				binary:    string // binary that gets installed
+				version:   string // known-good/-installable version
+				debug:     bool | *false
+				_test:     docker.#Run & {
+					input: system.build.output
+					mounts: {
+						project_root: {
+							dest:     "/project/"
+							type:     "fs"
+							contents: client.filesystem.".".read.contents
+						}
 					}
-				}
-				command: {
-					name: "/bin/bash"
-					//       -l enters bash's `login` startup flow, so that ~/.bashrc is sourced
-					args: [ "-lc", """
-						set -euo pipefail
-						cd \(mounts.project_root.dest)
-						# asdf needs local changes to be present in git commits, so we start from an empty repo and add everything
-						git init -b test_in_dagger >/dev/null
-						git add .
-						git -c user.email=t@example.com -c user.name=testing commit -m testing >/dev/null
-						#export ASDF_ACE_DEBUG=1
-						asdf plugin add honeyvent \(mounts.project_root.dest)
-						# FIXME: the rest of this is bad, and in the wrong place
-						export EXAMPLE=\(mounts.project_root.dest)/examples/honeyvent
-						ln -s $EXAMPLE/honeyvent.cue $HOME/.tool-sources.asdface.cue
-						#DEBIAN_FRONTEND=noninteractive apt-get -q install libxml2 libicu67 -o=Dpkg::Use-Pty=0 --no-install-suggests --no-install-recommends # ew
-						# This vvv line vvv *is* the test. ^^^ that ^^^ is setup, and lines +2 onwards are results checking
-						# It's probably worth shunting this all into bats at some point, but let's see how far we get without it.
-						asdf install honeyvent v1.1.0
-						asdf global honeyvent v1.1.0
-						cat "$(asdf which honeyvent)"         | md5sum --check $EXAMPLE/v1.1.0.binary.md5sum
-						#hurl --version | cut -f1-2 -d' ' | md5sum --check $EXAMPLE/1.6.1.version-output.truncated.md5sum
-						""",
-					]
+					env: {
+						if (debug) {
+							ASDF_ACE_DEBUG: "1"
+						}
+					}
+					command: {
+						name: "/bin/bash"
+						//       -l enters bash's `login` startup flow, so that ~/.bashrc is sourced
+						args: [ "-lc", """
+							set -euo pipefail
+							cd \(mounts.project_root.dest)
+							# asdf needs local changes to be present in git commits, so we start from an empty repo and add everything
+							git init -b test_in_dagger >/dev/null
+							git add .
+							git -c user.email=t@example.com -c user.name=testing commit -m testing >/dev/null
+							asdf plugin add \(binary) \(mounts.project_root.dest)
+							# FIXME: the rest of this is bad, and in the wrong place
+							cp \(mounts.project_root.dest)/\(directory)/config.cue $HOME/.tool-sources.asdface.cue
+							# This vvv line vvv *is* the test. ^^^ that ^^^ is setup, and lines +2 onwards are results checking
+							# It's probably worth shunting this all into bats at some point, but let's see how far we get without it.
+							asdf install \(binary) \(version)
+							asdf global \(binary) \(version)
+							cat "$(asdf which \(binary))" | md5sum --check \(mounts.project_root.dest)/\(directory)/\(version).binary.md5sum
+							""",
+						]
+					}
 				}
 			}
 		}
