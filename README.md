@@ -18,15 +18,17 @@ links in the chain of trust that you're relying on.
 
 ## Using this plugin
 
-This tool is at version v0.0.3. This means its interface is liable to change,
+This tool is at version v0.0.4. This means its interface is liable to change,
 as it's currently pretty experimental.
 
-Well before v1.0.0 is released, however, a more stable interface will be
-iterated towards.
+Well before v1.0.0 is released, however, a more stable interface is being
+iterated towards. Feedback about the current interface is very welcome!
 
-The current version is able to install binaries that are found in compressed
-tarballs that curl is able to fetch. Only 1 binary per remote tarball is
-currently supported.
+Each tool you configure can refer to either a compressed tarball, or a single
+unpackaged binary.
+
+A compressed tarball can have multiple binaries extracted from it; a single
+unpackaged binary provides only a single binary.
 
 ### Pre-requisites
 
@@ -41,36 +43,44 @@ Make the `cue` CLI available in your `$PATH`, however you usually do that.
 
 ### Configuration
 
-The following setup will allow for a single binary from a gzipped tarball to be
-installed.
+Each tool you configure can refer to either a compressed tarball, or a single
+unpackaged binary.
+
+A compressed tarball can have multiple binaries extracted from it; a single
+unpackaged binary is, of course, only able to provide a single binary.
 
 Populate a `~/.tool-sources.asdface.cue` file (NB this name & location is up
 for discussion) with 1 or more tool's information inside the top-level `v0` key
-("v0" reflects the unstable nature of this plugin, pre-1.0):
+("v0" reflects the unstable nature of this plugin, pre-1.0).
+
+Indicate that each tool is either a `#TarGz` or a `#BinaryDownload`, as
+demonstrated here. NB The `& {` suffix is a *vital* part of the config!
 
 ```CUE
 package asdface
 
 v0: {
- tools: {
-  tool_name: {
-   url: "https://example.com/path/to/file/containing/\(version.oc)/and/\(go.os.lc)/and/\(go.arch.uc)/vars.tgz"
-   tar_file: "path/to/file/in/tarball"
-   bin_name: "binary_filename_we_want_to_use_in_the_shell"
+  tools: {
+    tool_name: #BinaryDownload & {
+      source: "https://example.com/path/to/binary/containing/\(version.oc)/and/\(go.os.lc)/and/\(go.arch.uc)/vars"
+      create: "binary_filename_we_want_to_use_in_the_shell"
+    }
+    "tool-names-containing-hyphens-need-to-be-in-quotes": #TarGz & {
+      source: "https://example.com/path/to/file/containing/\(version.oc)/and/\(go.os.lc)/and/\(go.arch.uc)/vars.tgz"
+      create: binary_filename_we_want_to_use_in_the_shell: "path/to/file/in/tarball"
+      create: {
+        "more-binaries-we-want-to-use-this-time-containing-hyphens": "path/to/this/file/in/the/same/tarball"
+        simpleFilename: "fileAtRootOfTarball"
+      }
+    }
   }
-  "tool-names-containing-hyphens-need-to-be-in-quotes": {
-   url: "https://example.com/path/to/file/containing/\(version.oc)/and/\(go.os.lc)/and/\(go.arch.uc)/vars.tgz"
-   tar_file: "path/to/file/in/tarball"
-   bin_name: "binary_filename_we_want_to_use_in_the_shell"
-  }
- }
 }
 ```
 
-The `url`, `tar_file` and `bin_name` keys' value can contain variables,
-referenced in [CUE's `\(variable)`
-form](https://cuelang.org/docs/tutorials/tour/expressions/interpolation/). The
-set of valid variable prefixes is currently:
+Any keys' value can contain variables, referenced in [CUE's `\(variable)`
+interpolation
+syntax](https://cuelang.org/docs/tutorials/tour/expressions/interpolation/).
+The set of valid variable prefixes is currently:
 
 - `version`: the literal version requested by the user
 - `uname.m`: the output of `uname -m`

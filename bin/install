@@ -8,15 +8,14 @@ tool="$(basename "$(dirname "${__dirname}")")"; readonly tool
 
 config=("$HOME/.tool-sources.asdface.cue" "$__dirname/facts.cue")
 
-tar_path="$(cue export -T -t uname_m="$(uname -m)" -t uname_s="$(uname -s)" -t version="$ASDF_INSTALL_VERSION" -e "v0.tools.\"$tool\".tar_path" --out=text "${config[@]}")"
-bin_name="$(cue export -T -t uname_m="$(uname -m)" -t uname_s="$(uname -s)" -t version="$ASDF_INSTALL_VERSION" -e "v0.tools.\"$tool\".bin_name" --out=text "${config[@]}")"
-
-mkdir "$ASDF_INSTALL_PATH/bin"
-cd "$ASDF_INSTALL_PATH/bin"
-
-tar -x -z -f "$ASDF_DOWNLOAD_PATH/asdf-file-fetched-from-server" "$tar_path"
-chmod +x "$tar_path"
-if [ "$tar_path" != "$bin_name" ]; then
-  mv "$tar_path" "$bin_name"
-fi
-rmdir -p "$(dirname "$tar_path")" 2>/dev/null || true
+sh -ec "$(
+    cue export -e "v0.tools.\"$tool\".script.install.sh" \
+    --out text \
+    --inject-vars \
+    --inject uname_m="$(uname -m)" \
+    --inject uname_s="$(uname -s)" \
+    --inject version="$ASDF_INSTALL_VERSION" \
+    --inject download_dir="$ASDF_DOWNLOAD_PATH" \
+    --inject install_dir="$ASDF_INSTALL_PATH" \
+    "${config[@]}"
+)"

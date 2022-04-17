@@ -153,6 +153,41 @@ actions: test: {
 					]
 				}
 			}
+			honeyvent: docker.#Run & {
+				input: system.build.output
+				mounts: {
+					project_root: {
+						dest:     "/project/"
+						type:     "fs"
+						contents: client.filesystem.".".read.contents
+					}
+				}
+				command: {
+					name: "/bin/bash"
+					//       -l enters bash's `login` startup flow, so that ~/.bashrc is sourced
+					args: [ "-lc", """
+						set -euo pipefail
+						cd \(mounts.project_root.dest)
+						# asdf needs local changes to be present in git commits, so we start from an empty repo and add everything
+						git init -b test_in_dagger >/dev/null
+						git add .
+						git -c user.email=t@example.com -c user.name=testing commit -m testing >/dev/null
+						#export ASDF_ACE_DEBUG=1
+						asdf plugin add honeyvent \(mounts.project_root.dest)
+						# FIXME: the rest of this is bad, and in the wrong place
+						export EXAMPLE=\(mounts.project_root.dest)/examples/honeyvent
+						cp $EXAMPLE/honeyvent.cue $HOME/.tool-sources.asdface.cue
+						#DEBIAN_FRONTEND=noninteractive apt-get -q install libxml2 libicu67 -o=Dpkg::Use-Pty=0 --no-install-suggests --no-install-recommends # ew
+						# This vvv line vvv *is* the test. ^^^ that ^^^ is setup, and lines +2 onwards are results checking
+						# It's probably worth shunting this all into bats at some point, but let's see how far we get without it.
+						asdf install honeyvent v1.1.0
+						asdf global honeyvent v1.1.0
+						cat "$(asdf which honeyvent)"         | md5sum --check $EXAMPLE/v1.1.0.binary.md5sum
+						#hurl --version | cut -f1-2 -d' ' | md5sum --check $EXAMPLE/1.6.1.version-output.truncated.md5sum
+						""",
+					]
+				}
+			}
 		}
 	}
 }
