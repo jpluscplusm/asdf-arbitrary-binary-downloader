@@ -8,12 +8,12 @@ if ! command -v cue >/dev/null; then
     exit 1
 fi
 
-# detect the tool name
 __dirname="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; readonly __dirname
 tool="$(basename "$(dirname "${__dirname}")")"; readonly tool
 
-config=("$HOME/.tool-sources.asdface.cue" "$__dirname/facts.cue")
+ln -nfs "$HOME/.tool-sources.asdface.cue" "$__dirname/user-config.cue"
 
+cd "$__dirname"
 sh -ec "$(
     cue export -e "v0.tools.\"$tool\".script.download.sh" \
     --out text \
@@ -22,5 +22,5 @@ sh -ec "$(
     --inject uname_s="$(uname -s)" \
     --inject version="$ASDF_INSTALL_VERSION" \
     --inject download_dir="$ASDF_DOWNLOAD_PATH" \
-    "${config[@]}"
+    .:asdface
 )"

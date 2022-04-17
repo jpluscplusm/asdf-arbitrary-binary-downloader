@@ -2,12 +2,18 @@
 if [ "$ASDF_ACE_DEBUG" ]; then set -x; fi
 set -Eeuo pipefail
 
-# detect the tool name
+if ! command -v cue >/dev/null; then
+    echo "FATAL: The asdf-ace plugin requires the CUE cli in order to operate, but it is not installed." >&2
+    echo "FATAL: Please install it from https://cuelang.org/docs/install/#download and try again." >&2
+    exit 1
+fi
+
 __dirname="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; readonly __dirname
 tool="$(basename "$(dirname "${__dirname}")")"; readonly tool
 
-config=("$HOME/.tool-sources.asdface.cue" "$__dirname/facts.cue")
+ln -nfs "$HOME/.tool-sources.asdface.cue" "$__dirname/user-config.cue"
 
+cd "$__dirname"
 sh -ec "$(
     cue export -e "v0.tools.\"$tool\".script.install.sh" \
     --out text \
@@ -17,5 +23,5 @@ sh -ec "$(
     --inject version="$ASDF_INSTALL_VERSION" \
     --inject download_dir="$ASDF_DOWNLOAD_PATH" \
     --inject install_dir="$ASDF_INSTALL_PATH" \
-    "${config[@]}"
+    .:asdface
 )"
