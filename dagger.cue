@@ -144,6 +144,6 @@ actions: _dockerhub: {
 client: filesystem: {
 	".": read: {
 		contents: dagger.#FS
-		exclude: [ ".git", "cue.mod", "dagger.cue"]
+		exclude: [ ".git", "cue.mod", "dagger.cue", "bin/local-config.cue"]
 	}
 }
