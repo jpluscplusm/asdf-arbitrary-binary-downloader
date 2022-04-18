@@ -7,4 +7,6 @@ import "strings"
 	oc: string
 	uc: strings.ToUpper(oc)
 	lc: strings.ToLower(oc)
+	tc: strings.ToTitle(oc)
+	cc: strings.ToCamel(oc)
 }
