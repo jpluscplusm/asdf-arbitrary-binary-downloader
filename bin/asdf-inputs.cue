@@ -1,7 +1,7 @@
 package asdface
 
 import (
-	"jonathanmatthews.com/utility:jmstrings"
+	"cue.jonathanmatthews.com/utility:jmstrings"
 )
 
 local: {

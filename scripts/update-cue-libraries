@@ -1,0 +1,5 @@
+# to test, run as:
+# ./scripts/update-cue-libraries --dry-run
+
+set -x
+rsync "$@" -av --delete --exclude '.git/' ~/code/cue.jonathanmatthews.com bin/cue.mod/pkg/

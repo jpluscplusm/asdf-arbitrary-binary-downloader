@@ -2,7 +2,7 @@ package asdface
 
 import (
 	"strings"
-	"jonathanmatthews.com/utility:jmstrings"
+	"cue.jonathanmatthews.com/utility:jmstrings"
 )
 
 uname: {
