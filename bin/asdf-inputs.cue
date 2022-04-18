@@ -5,8 +5,8 @@ import (
 )
 
 local: {
-	download_dir: string @tag(download_dir)
-	install_dir:  string @tag(install_dir)
+	download_dir: string | *"UNSET-in-asdf-input.cue" @tag(download_dir)
+	install_dir:  string | *"UNSET-in-asdf-input.cue" @tag(install_dir)
 }
 
-version: jmstrings.#MCS & {oc: string @tag(version)}
+version: jmstrings.#MCS & {oc: string | *"UNSET-in-asdf-input.cue" @tag(version)}
