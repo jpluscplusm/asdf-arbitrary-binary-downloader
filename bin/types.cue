@@ -14,7 +14,7 @@ import (
 			_local_file:      local.download_dir + "/" + _remote_filename
 			sh:               "curl --fail --location --silent \(source) -o \(_local_file)"
 		}
-
+		"list-all": sh: string | *"echo"
 		install: {
 			_bin_dir: local.install_dir + "/bin"
 			sh:       """
@@ -37,7 +37,7 @@ import (
 				curl --fail --location --silent \(source) -o \(_local_file)
 				"""
 		}
-
+		"list-all": sh: string | *"echo"
 		install: {
 			_bin_dir: local.install_dir + "/bin"
 			sh:       """
