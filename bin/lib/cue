@@ -1,0 +1,12 @@
+function cue_export_string() {
+    local query="$1"
+    cue export -e "$query" \
+    --out text \
+    --inject-vars \
+    --inject uname_m="$(uname -m)" \
+    --inject uname_s="$(uname -s)" \
+    --inject version="${ASDF_INSTALL_VERSION:-1UNSET1}" \
+    --inject download_dir="${ASDF_DOWNLOAD_PATH:-2UNSET2}" \
+    --inject install_dir="${ASDF_INSTALL_PATH:-3UNSET3}" \
+    .:asdface
+}
