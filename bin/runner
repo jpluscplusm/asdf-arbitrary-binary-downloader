@@ -13,7 +13,7 @@ __binname="$(basename "${BASH_SOURCE[0]}")"; readonly __binname
 __toolname="$(basename "$(dirname "${__bindir}")")"; readonly __toolname
 
 # shellcheck source-path=SCRIPTDIR
-. "$__bindir/lib/cue"
+. "$__bindir/shell-lib/cue"
 
 ln -nfs "$HOME/.tool-sources.asdface.cue" "$__bindir/user-config.cue"
 
