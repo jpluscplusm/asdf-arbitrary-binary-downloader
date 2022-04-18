@@ -91,7 +91,9 @@ The set of valid variable prefixes is currently:
 A letter-case modifier suffix is required for all references. For the identity
 modifier, which does not change any letter cases, use the `.oc` (original case)
 suffix. `.uc` and `.lc` suffixes are also available for upper- and lower-case,
-respectively.
+respectively. `.tc` and `.cc` suffixes denote title-case and camel-case, but
+because these both split on word boundaries they are less useful than one
+might anticipate.
 
 For example, if the version string "v1.2.3" has been provided to the ASDF CLI,
 the following variables are available for use in the config file, to be
@@ -100,6 +102,8 @@ interpolated at install-time:
 - `version.oc`: "v1.2.3"
 - `version.uc`: "V1.2.3"
 - `version.lc`: "v1.2.3"
+- `version.tc`: "V1.2.3"
+- `version.cc`: "v1.2.3"
 
 At least one variant of the `version` variable should (*must*!) be present in
 the `url` key, because the `~/.tool-sources.asdface.cue` file is *not* the
