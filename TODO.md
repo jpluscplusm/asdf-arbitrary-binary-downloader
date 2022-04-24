@@ -15,6 +15,7 @@
 
 - in-CUE scripts:
   - shellcheck
+- cue vet `bin/*.cue`
 - more test cases, probably combinatorial:
   - tar with multiple files
   - remote file, tarball member, and installed-binary with:
