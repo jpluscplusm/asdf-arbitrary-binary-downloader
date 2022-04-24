@@ -18,19 +18,25 @@ links in the chain of trust that you're relying on.
 
 ## Using this plugin
 
-This tool is at version v0.0.4. This means its interface is liable to change,
+This tool is at version v0.0.5. This means its interface is liable to change,
 as it's currently pretty experimental.
 
 Well before v1.0.0 is released, however, a more stable interface is being
 iterated towards. Feedback about the current interface is very welcome!
 
-Each tool you configure can refer to either a compressed tarball, or a single
-unpackaged binary.
+Each tool you configure can refer to either a compressed tarball, a zip
+archive, or a single unpackaged binary.
 
-A compressed tarball can have multiple binaries extracted from it; a single
-unpackaged binary provides only a single binary.
+A compressed tarball or zip archive can have multiple binaries extracted from
+them; a single unpackaged binary provides only a single binary.
 
 ### Pre-requisites
+
+- `curl`
+- `cue` (see below)
+- [optional] `tar`
+- [optional] `gunzip`
+- [optional] `unzip`
 
 This plugin requires [the `cue`
 CLI](https://cuelang.org/docs/install/#install-cue-from-official-release-binaries)
@@ -41,13 +47,25 @@ should ever need to fetch!
 
 Make the `cue` CLI available in your `$PATH`, however you usually do that.
 
+You will also need the tools installed that understand the types of files you
+want this plugin to fetch.
+
+Using compressed tarballs requires `tar` and `gunzip` to be available. These
+are usually already installed as part of the base operating system, and you may
+well not need to install them yourself.
+
+Using zip archives requires the `unzip` command to be available. This is
+usually trivially installable, if it's not already installed.
+
+Using direct binary downloads requires no additional tools.
+
 ### Configuration
 
-Each tool you configure can refer to either a compressed tarball, or a single
-unpackaged binary.
+Each tool you configure can refer to either a compressed tarball, a zip
+archive, or a single unpackaged binary.
 
-A compressed tarball can have multiple binaries extracted from it; a single
-unpackaged binary is, of course, only able to provide a single binary.
+A zip file or compressed tarball can have multiple binaries extracted from them;
+a single unpackaged binary is, of course, only able to provide a single binary.
 
 Populate a `~/.tool-sources.asdface.cue` file (NB this name & location is up
 for discussion) with 1 or more tool's information inside the top-level `v0` key
@@ -71,6 +89,14 @@ v0: {
       create: {
         "more-binaries-we-want-to-use-this-time-containing-hyphens": "path/to/this/file/in/the/same/tarball"
         simpleFilename: "fileAtRootOfTarball"
+      }
+    }
+    someTool: #Zip & {
+      source: "https://example.com/path/\(version.oc)/withvars/\(go.os.lc)/and/\(go.arch.uc)/archive-\(version.oc).zip"
+      create: {
+        binary_name:    "path/to/file/in/ziparchive"
+        binary_name_2:  "path/to/this/file/in/the/same/ziparchive"
+        simpleFilename: "fileAtRootOfArchive"
       }
     }
   }

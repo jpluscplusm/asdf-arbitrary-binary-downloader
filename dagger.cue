@@ -53,7 +53,8 @@ actions: test: {
 							apt-get -q install -o=Dpkg::Use-Pty=0 --no-install-recommends --no-install-suggests --assume-yes \\
 								curl \\
 								git \\
-								ca-certificates
+								ca-certificates \\
+								unzip
 							git config --add --global advice.detachedHead false
 							git clone https://github.com/asdf-vm/asdf.git $HOME/.asdf --branch v0.9.0
 							echo 'PATH+=:$HOME/bin' >> $HOME/.bashrc
@@ -88,6 +89,12 @@ actions: test: {
 				directory: "examples/honeyvent"
 				binary:    "honeyvent"
 				version:   "v1.1.0"
+				debug:     false
+			}
+			op: #ExampleInstall & {
+				directory: "examples/op"
+				binary:    "op"
+				version:   "v2.0.2"
 				debug:     false
 			}
 			#ExampleInstall: {
