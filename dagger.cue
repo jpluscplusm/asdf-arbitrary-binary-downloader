@@ -103,6 +103,12 @@ actions: test: {
 				version:   "v0.6.1"
 				debug:     false
 			}
+			dagger: #ExampleInstall & {
+				directory: "examples/dagger"
+				binary:    "dagger"
+				version:   "v0.2.8"
+				debug:     true
+			}
 
 			#ExampleInstall: {
 				directory: string // relative to repo root
