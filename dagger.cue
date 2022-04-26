@@ -97,6 +97,13 @@ actions: test: {
 				version:   "v2.0.2"
 				debug:     false
 			}
+			agebox: #ExampleInstall & {
+				directory: "examples/agebox"
+				binary:    "agebox"
+				version:   "v0.6.1"
+				debug:     false
+			}
+
 			#ExampleInstall: {
 				directory: string // relative to repo root
 				binary:    string // binary that gets installed
