@@ -1,13 +1,19 @@
-package asdface
+package types
 
 import (
 	"strings"
 	"path"
 )
 
+_#filesytem_inputs: {
+	download_dir: string
+	install_dir:  string
+}
+
 #BinaryDownload: {
 	source: string
 	create: string
+	local:  _#filesytem_inputs
 	script: {
 		download: {
 			_remote_filename: strings.SplitN(path.Base(source, path.Unix), "?", 2)[0]
@@ -29,6 +35,7 @@ import (
 #TarGz: {
 	source: string
 	create: [string]: string
+	local: _#filesytem_inputs
 	script: {
 		download: {
 			_remote_filename: strings.SplitN(path.Base(source, path.Unix), "?", 2)[0]
@@ -62,6 +69,7 @@ import (
 #Zip: {
 	source: string
 	create: [string]: string
+	local: _#filesytem_inputs
 	script: {
 		download: {
 			_remote_filename: strings.SplitN(path.Base(source, path.Unix), "?", 2)[0]
