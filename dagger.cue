@@ -1,4 +1,4 @@
-package asdface
+package development
 
 import (
 	"dagger.io/dagger"
@@ -164,6 +164,6 @@ actions: _dockerhub: {
 client: filesystem: {
 	".": read: {
 		contents: dagger.#FS
-		exclude: [ ".git", "cue.mod", "dagger.cue", "bin/local-config.cue"]
+		exclude: [ ".git", "dagger.cue", "bin/local-config.cue"]
 	}
 }
