@@ -10,7 +10,7 @@ dagger.#Plan
 //# Run all the tests: unit + system (use `dagger do test --help` for more help ...)
 actions: test: {
 	//# Run all the unit tests (use `dagger do test unit --help` for info about more deeply-nested tasks ...)
-	unit: {
+	lint: {
 		#asdf_script_interface: [
 			"bin/list-all",
 			"bin/download",
@@ -39,6 +39,27 @@ actions: test: {
 			}
 		}
 	}
+
+	unit: {
+		cue: {
+			_test_dirs: [
+				"ace/facts/test",
+			]
+			for dir in _test_dirs {
+				(dir): docker.#Run & {
+					input: actions._dockerhub.cue.image
+					mounts: project_root: {
+						dest:     "/mnt/"
+						type:     "fs"
+						contents: client.filesystem.".".read.contents
+					}
+					workdir: "\(mounts.project_root.dest)/\(dir)"
+					command: name: "vet"
+				}
+			}
+		}
+	}
+
 	//# Run all the system tests
 	system: {
 		build: docker.#Build & {
@@ -159,6 +180,7 @@ actions: test: {
 actions: _dockerhub: {
 	shellcheck: docker.#Pull & {source: "koalaman/shellcheck-alpine:stable"}
 	debian:     docker.#Pull & {source: "debian:bullseye"}
+	cue:        docker.#Pull & {source: "cuelang/cue:latest"}
 }
 
 client: filesystem: {
