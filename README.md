@@ -71,8 +71,8 @@ Populate a `~/.tool-sources.asdface.cue` file (NB this name & location is up
 for discussion) with 1 or more tool's information inside the top-level `v0` key
 ("v0" reflects the unstable nature of this plugin, pre-1.0).
 
-Indicate that each tool is either a `#TarGz` or a `#BinaryDownload`, as
-demonstrated here. NB The `& {` suffix is a *vital* part of the config!
+Indicate that each tool is either a `#TarGz`, a `#Zip`, or a `#BinaryDownload`,
+as demonstrated here. NB The `& {` suffix is a *vital* part of the config!
 
 ```CUE
 package asdface
