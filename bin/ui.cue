@@ -3,7 +3,8 @@ package asdface
 import (
 	"jonathanmatthews.com/utility:jmstrings"
 	"jonathanmatthews.com/asdf/ace:types"
-	"jonathanmatthews.com/asdf/ace:facts"
+	"jonathanmatthews.com/asdf/ace/facts:system"
+	"jonathanmatthews.com/asdf/ace/facts:golang"
 )
 
 #TarGz:          types.#TarGz & {local:          asdf}
@@ -14,7 +15,7 @@ version: jmstrings.#MultiCaseString & {
 	in: string @tag(version)
 }
 
-uname: facts.#Uname & {
+uname: system.#Uname & {
 	in: {
 		m: string @tag(uname_m)
 		s: string @tag(uname_s)
@@ -23,7 +24,7 @@ uname: facts.#Uname & {
 	s: jmstrings.#MultiCaseString
 }
 
-go: facts.#Go & {
+go: golang.#Go & {
 	in: {
 		os: string @tag(os, var=os)
 		m:  uname.m.lc
