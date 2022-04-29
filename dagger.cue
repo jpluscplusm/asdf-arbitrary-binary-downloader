@@ -128,7 +128,7 @@ actions: test: {
 				directory: "examples/dagger"
 				binary:    "dagger"
 				version:   "v0.2.8"
-				debug:     true
+				debug:     false
 			}
 
 			#ExampleInstall: {
