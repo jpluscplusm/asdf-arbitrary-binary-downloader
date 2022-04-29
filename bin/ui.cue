@@ -19,17 +19,17 @@ uname: facts.#Uname & {
 		m: string @tag(uname_m)
 		s: string @tag(uname_s)
 	}
+	m: jmstrings.#MultiCaseString
+	s: jmstrings.#MultiCaseString
 }
-go: {
-	os: jmstrings.#MultiCaseString & {
-		in: string @tag(os, var=os)
+
+go: facts.#Go & {
+	in: {
+		os: string @tag(os, var=os)
+		m:  uname.m.lc
 	}
-	arch: jmstrings.#MultiCaseString & {
-		in: *_arch_map[uname.m.lc] | uname.m.lc
-	}
-	_arch_map: {
-		x86_64: "amd64"
-	}
+	os:   jmstrings.#MultiCaseString
+	arch: jmstrings.#MultiCaseString
 }
 
 asdf: {
