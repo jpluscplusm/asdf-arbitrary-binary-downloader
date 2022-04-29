@@ -41,7 +41,7 @@ actions: test: {
 	}
 
 	unit: {
-		cue: {
+		cue: vet: {
 			_test_dirs: [
 				"ace/facts/test",
 			]
