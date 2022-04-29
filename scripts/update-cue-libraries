@@ -2,4 +2,6 @@
 # ./scripts/update-cue-libraries --dry-run
 
 set -x
-rsync "$@" -av --delete --exclude '.git/' ~/code/cue.jonathanmatthews.com bin/cue.mod/pkg/
+rsync "$@" -av --delete --exclude '.git/' \
+	~/code/cue.jonathanmatthews.com/utility \
+	cue.mod/pkg/jonathanmatthews.com/
