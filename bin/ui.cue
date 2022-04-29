@@ -3,6 +3,7 @@ package asdface
 import (
 	"jonathanmatthews.com/utility:jmstrings"
 	"jonathanmatthews.com/asdf/ace:types"
+	"jonathanmatthews.com/asdf/ace:facts"
 )
 
 #TarGz:          types.#TarGz & {local:          asdf}
@@ -13,12 +14,10 @@ version: jmstrings.#MultiCaseString & {
 	in: string @tag(version)
 }
 
-uname: {
-	m: jmstrings.#MultiCaseString & {
-		in: string @tag(uname_m)
-	}
-	s: jmstrings.#MultiCaseString & {
-		in: string @tag(uname_s)
+uname: facts.#Uname & {
+	in: {
+		m: string @tag(uname_m)
+		s: string @tag(uname_s)
 	}
 }
 go: {
