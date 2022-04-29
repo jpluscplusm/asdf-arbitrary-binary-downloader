@@ -43,7 +43,7 @@ actions: test: {
 	unit: {
 		cue: vet: {
 			_test_dirs: [
-				"ace/facts/test",
+				"facts/test",
 			]
 			for dir in _test_dirs {
 				(dir): docker.#Run & {

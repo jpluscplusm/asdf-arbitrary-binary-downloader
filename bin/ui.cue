@@ -2,14 +2,14 @@ package asdface
 
 import (
 	"jonathanmatthews.com/utility:jmstrings"
-	"jonathanmatthews.com/asdf/ace:types"
+	"jonathanmatthews.com/asdf/ace/formats"
 	"jonathanmatthews.com/asdf/ace/facts:system"
 	"jonathanmatthews.com/asdf/ace/facts:golang"
 )
 
-#TarGz:          types.#TarGz & {local:          asdf}
-#Zip:            types.#Zip & {local:            asdf}
-#BinaryDownload: types.#BinaryDownload & {local: asdf}
+#TarGz:          formats.#TarGz & {local:          asdf}
+#Zip:            formats.#Zip & {local:            asdf}
+#BinaryDownload: formats.#BinaryDownload & {local: asdf}
 
 version: jmstrings.#MultiCaseString & {
 	in: string @tag(version)
