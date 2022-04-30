@@ -6,7 +6,7 @@ version-switch.
 
 <hr>
 <details>
-<summary>:rotating_light: Security Klaxon (click to expand :accordion:)</summary>
+<summary>:accordion: Security Klaxon :rotating_light::rotating_light::rotating_light:</summary>
 
 This plugin's name is a "playful" reminder that the security model of ASDF
 is very much "buyer beware". ASDF requires you to trust plugin authors, as
@@ -53,7 +53,7 @@ this plugin to download binaries from sites, projects and users that you trust.
 
 <hr>
 <details>
-<summary>Example config file (:accordion:)</summary>
+<summary>:accordion: Example config file</summary>
 
 ```
 v0: tools: example_tool_name: #BinaryDownload & {
@@ -165,26 +165,137 @@ v0: {
 
 #### Variables
 
-Any keys' value can contain variables, referenced in [CUE's `\(variable)`
-interpolation
-syntax](https://cuelang.org/docs/tutorials/tour/expressions/interpolation/) or
-simply using string concatenation.
+Any string can contain variables, expressed in the configuration language
+[CUE](https://cuelang.org). Expand the next :accordion: section for an
+incomplete crash course in CUE, its strings, and variables.
 
 <hr>
 <details>
-<summary>CUE string concatentation example (:accordion:)</summary>
+<summary>:accordion: CUE: an incomplete, 90 second guide</summary>
 
-Given `some_variable` containing the string `"hello-world"`:
+##### CUE: an incomplete, 90 second guide
 
-`"a_string/" + some_variable + "/another_string"`
+Because this plugin's configuration is written in [CUE](https://cuelang.org),
+you have all the facilities of CUE available when writing your configuration.
 
-... produces `"a_string/hello-world/another_string"`
+But don't let that put you off - **you don't need to learn a whole new language**!
+
+In the **vast** majority of cases you'll only
+need to use [CUE's `\(variable)` interpolation
+syntax](https://cuelang.org/docs/tutorials/tour/expressions/interpolation/) to
+set things up correctly.
+
+Here's a really simple guide to the features of CUE that you'll probably need
+to use.
+
+This plugin requires your configuration file to declare itself, on its first
+line, to be part of the `asdface` package in order to work correctly.
+
+    package asdface
+
+CUE is a hierarchy of key:value pairs, nested as deeply as you need.
+
+CUE keys are strings. If they only contain only alphanumerics
+(`[a-z][A-Z][0-9]`) and underscores then they don't need to be quoted. If they
+contain hyphens, spaces, or other punctuation, then they have to be contained
+in double quotes.
+
+    key: ...
+    key1: ...
+    a_key_with_underscores: ...
+    "a key with spaces": ...
+    "a-key-with-hyphens": ...
+
+Nested keys can also be quoted or unquoted strings, depending on their
+alphanumeric contents, as above. Curly braces are used to indicate nesting.
+
+    key: {
+      a_nested_key: {
+        "a-third-level-key": {
+          "A Deeply nested key": ...
+        }
+      }
+    }
+
+CUE values can be any type. This plugin require leaf node values to be strings.
+
+This plugin reads its configuration from keys inside the `v0.tools` hierarchy:
+
+    v0: {
+      tools: {
+        ...
+      }
+    }
+
+String values are contained in double quotes.
+
+    key: "a key value"
+
+Line comments extend from a double-forward-slash to the end of the line.
+
+    // this is a comment on a line by itself
+    key: "a value" // this is a comment alongside a key
+
+Strings can be concatentated with the `+` operator.
+
+    key: "a value " + "split in 2" // produces ...
+    key: "a value split in 2"
+
+Both of the above definitions of `key` can co-exist in the same config
+simultaneously, because they agree with one another. CUE config is evaluated
+order-independently, except where inherently ordered entities are involved,
+such as arrays. This plugin does not require you to use arrays.
+
+Strings can be split across multiple lines at any point, any number of times.
+Indentation is unimportant, but the `cue fmt [filename]` command will reformat
+your config file to the "official" standards, if you ask it to!
+
+    key: "a long value that " +
+       "needs to be split " +
+                "across " +
+       "multiple lines"
+    key: "a long value that needs to be split across multiple lines"
+
+As above, because both definitions of `key` agree with one another they are
+able to co-exist in the same CUE configuration. However, the 2nd definition is
+not *required* - it is included here solely to demonstrate the end result. It
+would be entirely valid if it *were* included, however.
+
+Strings can include variables that are interpolated inline, using `\(value)`
+syntax.
+
+    key1: "a value"
+    key2: "this string also contains \(key1)"
+    key2: "this string also contains a value"
+
+Because CUE evaluation is order-independent, assignment can happen after use.
+
+    key1: "this string contains \(key2)"
+    key2: "another string"
+    key1: "this string contains another string"
+
+A single string can use both interpolation and concatentation.
+
+    key1: "value"
+    key2: "this string contains a \(key1) and also another " + key1
+    key2: "this string contains a value and also another value"
+
+The [variables that this plugin provides](#variables-provided-by-this-plugin)
+can be interpolated or concatenated into strings, in all the ways laid out
+above.
+
+For example, given the variable `go.os.lc` containing the string `"linux"` ...
+
+    key: "the/current-os/is/\(go.os.lc)/" // results in
+    key: "the/current-os/is/linux/"
 
 </details>
 <hr>
 
-All variables must contain 2 components: a selector and a modifier, separated by a `.`
-(period).
+##### Variables provided by this plugin
+
+All variables must contain 2 components: a selector and a modifier, separated
+by a `.` (period).
 
 This is the set of valid selectors, which will expand as we discover more
 useful values:
