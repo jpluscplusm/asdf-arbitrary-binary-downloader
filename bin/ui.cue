@@ -26,8 +26,8 @@ uname: system.#Uname & {
 
 go: golang.#Go & {
 	in: {
-		os: string @tag(os, var=os)
-		m:  uname.m.lc
+		os: !~"[A-Z]" & string @tag(os, var=os)
+		m:  !~"[A-Z]" & uname.m.lc
 	}
 	os:   jmstrings.#MultiCaseString
 	arch: jmstrings.#MultiCaseString
