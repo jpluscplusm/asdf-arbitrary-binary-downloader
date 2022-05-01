@@ -1,5 +1,6 @@
 # `asdf-ace`: Arbitrary Code Execution
 
+In this README:
   [Introduction](#introduction)
 | [Quick start](#quick-start)
 | [Using this plugin](#using-this-plugin)
@@ -61,7 +62,7 @@ this plugin to download binaries from sites, projects and users that you trust.
 ## Quick start
 
 1. Have a working [ASDF install](https://asdf-vm.com/).
-1. Find a tool that you want to install, that publishes pre-compiled binaries
+1. Find a tool that you want to install that publishes pre-compiled binaries
    either as direct downloads, or inside compressed tarballs or zip archives.
 1. Grab the appropriate download URL for your machine and operating system.
 1. Install [the `CUE`
@@ -85,6 +86,8 @@ this plugin to download binaries from sites, projects and users that you trust.
 <summary>:accordion: Example config file</summary>
 
 ```
+package asdface
+
 v0: tools:{
   example_tool_name: #TarGz & {
     source: "https://example.com/a_useful_project/releases/\(version.oc)/downloads/project-linux-amd64.tar.gz"
@@ -389,7 +392,8 @@ useful values:
   if this could be improved in any way!
 
 Modifiers indicate the specific upper/lower/etc case version of the selector's
-value that you want to use. You can use the following modifiers:
+value that you want to use. You can use the following modifiers on all
+selectors:
 
 - `oc` - original case: the exact string that the operating system gave us
 - `uc` - upper case: the `.oc` value, with all upper-case characters
@@ -402,9 +406,23 @@ value that you want to use. You can use the following modifiers:
   - even less useful than title-cased. If this IS useful, please do PR an
     example to this doc!
 
+Combining all the selectors with all the modifiers means that there are
+currently 25 variables available to interpolate into your configuration keys:
+
+```
+    case>|   original         upper         lower         title         camel
+---------+--------------------------------------------------------------------
+Version  | version.oc    version.uc    version.lc    version.tc    version.cc
+CPU      | uname.m.oc    uname.m.uc    uname.m.lc    uname.m.tc    uname.m.cc
+OS       | uname.s.oc    uname.s.uc    uname.s.lc    uname.s.tc    uname.s.cc
+GOOS     | go.os.oc      go.os.uc      go.os.lc      go.os.tc      go.os.cc
+GOARCH   | go.arch.oc    go.arch.uc    go.arch.lc    go.arch.tc    go.arch.cc
+```
+
 ### An example tool and configuration file
 
-So, for example, to reference a binary that's downloadable *for your specific machine* from
+So, for example, to reference a binary that's downloadable *for your specific
+machine* from
 
 ```
 https://example.com/a_useful_project/releases/v1.2.3/downloads/project-linux-amd64
@@ -676,7 +694,8 @@ deliberately intended not to scale beyond a few files.
 
 This plugin is a more capable but more complicated version of the following
 (fake, non-functional) shell script. It's hidden behind a :accordion: because
-it's so ugly.
+it's so ugly that it's offputting, and *this shell script plays absolutely no
+part in this plugin's job: **it's shown here solely as a pseudo-code analogy**!*
 
 <hr>
 <details>
@@ -693,24 +712,26 @@ URL=$(grep "^${TOOL_TO_INSTALL}.url" $config_file | cut -f2)
 UNAME_M=$(uname -m)
 UNAME_S=$(uname -s)
 
-eval $(cat generic-download-script \
-| sed -e "s/__URL__/$URL/g" \
-      -e "s/__VERSION__/$VERSION_TO_INSTALL/g" \
-      -e "s/__UNAME_M__/$UNAME_M/g" \
-      -e "s/__UNAME_S__/$UNAME_S/g") \
+cat generic-download-script                      \
+| sed -e "s/__URL__/$URL/g"                      \
+      -e "s/__VERSION__/$VERSION_TO_INSTALL/g"   \
+      -e "s/__UNAME_M__/$UNAME_M/g"              \
+      -e "s/__UNAME_S__/$UNAME_S/g"              \
+| bash                                           \
 > downloaded-file
 
 UNPACKER=$(grep "^${TOOL_TO_INSTALL}.unpacker" $config_file | cut -f2)
 BINARY=$(grep   "^${TOOL_TO_INSTALL}.binary"   $config_file | cut -f2)
 
-eval $(cat generic-installer-script \
-| sed -e "s/__UNPACKER__/$UNPACKER/g" \
-      -e "s/__BINARY__/$BINARY/g" \
-      -e "s/__DOWNLOAD__/downloaded-file/g" \
-      -e "s/__VERSION__/$VERSION_TO_INSTALL/g" \
+cat generic-install-script                       \
+| sed -e "s/__UNPACKER__/$UNPACKER/g"            \
+      -e "s/__BINARY__/$BINARY/g"                \
+      -e "s/__DOWNLOAD__/downloaded-file/g"      \
+      -e "s/__VERSION__/$VERSION_TO_INSTALL/g"   \
       -e "s/__INSTALL_TO__/$INSTALL_DIRECTORY/g" \
-      -e "s/__UNAME_M__/$UNAME_M/g" \
-      -e "s/__UNAME_S__/$UNAME_S/g")
+      -e "s/__UNAME_M__/$UNAME_M/g"              \
+      -e "s/__UNAME_S__/$UNAME_S/g"              \
+| bash
 ```
 
 </details>
