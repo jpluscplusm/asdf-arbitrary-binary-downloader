@@ -13,6 +13,7 @@
 - make missing key in sources error message waay nicer
   - why did a failed install make asdf believe the tool /was/ installed?
 - make examples more copy-able
+- add tgzip file suffix and handler
 
 ## Tests to add
 
