@@ -1,7 +1,5 @@
 on:
-  push:
-    paths-ignore:
-      - '**.md'
+  push
 
 concurrency:
   group: ${{ github.ref }}
