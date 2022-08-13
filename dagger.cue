@@ -162,7 +162,8 @@ actions: test: {
 							git -c user.email=t@example.com -c user.name=testing commit -m testing >/dev/null
 							asdf plugin add \(binary) \(mounts.project_root.dest)
 							# FIXME: the rest of this is bad, and in the wrong place
-							cp \(mounts.project_root.dest)/\(directory)/config.cue $HOME/.tool-sources.asdface.cue
+							mkdir -p $HOME/.config/asdf-ace
+							cp \(mounts.project_root.dest)/\(directory)/config.cue $HOME/.config/asdf-ace/tools.cue
 							# This vvv line vvv *is* the test. ^^^ that ^^^ is setup, and lines +2 onwards are results checking
 							# It's probably worth shunting this all into bats at some point, but let's see how far we get without it.
 							asdf install \(binary) \(version)

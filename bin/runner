@@ -11,11 +11,12 @@ fi
 __bindir="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"; readonly __bindir
 __binname="$(basename "${BASH_SOURCE[0]}")"; readonly __binname
 __toolname="$(basename "$(dirname "${__bindir}")")"; readonly __toolname
+__confdir="${XDG_CONFIG_HOME:-$HOME/.config}/asdf-ace/"
 
 # shellcheck source-path=SCRIPTDIR
 . "$__bindir/shell-lib/cue"
 
-ln -nfs "$HOME/.tool-sources.asdface.cue" "$__bindir/user-config.cue"
+ln -nfs "$__confdir/tools.cue" "$__bindir/user-config.cue"
 
 cd "$__bindir"
 sh -ec "$(cue_export_string "v0.tools.\"$__toolname\".script.\"$__binname\".sh")"

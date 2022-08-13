@@ -69,7 +69,7 @@ this plugin to download binaries from sites, projects and users that you trust.
    CLI](https://cuelang.org/docs/install/#install-cue-from-official-release-binaries).
 1. Install `curl`, and optionally either of `unzip` or `tar`, depending on the
    format you're downloading.
-1. Configure the file `$HOME/.tool-sources.asdface.cue` [as described
+1. Configure the file `$XDG_CONFIG_HOME/asdf-ace/tools.cue` [as described
    below](#configuration) with an appropriate tool setup:
    - the tool's name is only an informative alias, and doesn't have to match
      anything specific about the tool you're installing. In this quick start,
@@ -206,9 +206,11 @@ archive, or a single unpackaged binary.
 A compressed tarball or zip archive can have multiple binaries extracted from
 them. An unpackaged binary can only provide that single binary.
 
-Populate the file `$HOME/.tool-sources.asdface.cue` with 1 or more tool's
+Populate the file `$XDG_CONFIG_HOME/asdf-ace/tools.cue` with 1 or more tool's
 information inside the top-level `v0` key ("v0" reflects the unstable nature of
-this plugin, pre-1.0).
+this plugin, pre-1.0). If `$XDG_CONFIG_HOME` is unset (for instance if the tool
+is being used on a non-Linux OS, or the XDG conventions are not being used),
+the configuration file should be placed at `$HOME/.config/asdf-ace/tools.cue`.
 
 Indicate that each tool is either a `#TarGz`, a `#Zip`, or a `#BinaryDownload`,
 as demonstrated here. NB The `& {` suffix is a *vital* part of the config!
@@ -437,10 +439,10 @@ source: "https://example.com/a_useful_project/releases/" +
 ```
 
 This is because at least one variant of the `version` selector should (*must*!)
-be present in the `url` key, because the `$HOME/.tool-sources.asdface.cue` file
-isn't the final arbiter of *which* version ASDF will install.  No: **ASDF (and
-therefore you, the user) is in charge of WHICH version gets installed, not this
-config file.**
+be present in the `url` key, because the `$XDG_CONFIG_HOME/asdf-ace/tools.cue`
+file isn't the final arbiter of *which* version ASDF will install.  No: **ASDF
+(and therefore you, the user) is in charge of WHICH version gets installed, not
+this config file.**
 
 The config file teaches ASDF, via this plugin, how to download DIFFERENT
 versions.  If the version is hardcoded in the config then ... what's the point?
@@ -453,10 +455,10 @@ In order to make this config more portable, so you could re-use it on different
 operating systems and physical hardware, you'd need to swap more fixed elements
 for variables in the `source` line. All the examples in [this plugin's examples
 directory](/examples/) use this feature, so that you can simply copy and paste
-any of the examples into your `$HOME/.tool-sources.asdface.cue` file, and install
-the appropriate tool instantly. If you're going to PR an example into this
-plugin, so other people can benefit from your effort, please make the example
-as portable as you can!
+any of the examples into your `$XDG_CONFIG_HOME/asdf-ace/tools.cue` file, and
+install the appropriate tool instantly. If you're going to PR an example into
+this plugin, so other people can benefit from your effort, please make the
+example as portable as you can!
 
 To demonstrate doing this, let's pretend that you check your example
 `a_useful_project`'s Downloads page and discover that the project publishes
@@ -702,7 +704,7 @@ part in this plugin's job: **it's shown here solely as a pseudo-code analogy**!*
 <summary>:accordion: Don't worry - this isn't the actual implementation!</summary>
 
 ```bash
-config_file=~/.tool-sources.not-really.this-is-fake.txt
+config_file=~/.config/asdf-ace/tools.not-really.this-is-fake.txt
 
 read TOOL_TO_INSTALL
 read VERSION_TO_INSTALL
