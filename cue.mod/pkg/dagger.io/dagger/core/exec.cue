@@ -25,7 +25,7 @@ import "dagger.io/dagger"
 	workdir: string | *"/"
 
 	// User ID or name
-	user: string | *"root"
+	user: string | *"root:root"
 
 	// If set, always execute even if the operation could be cached
 	always: true | *false
@@ -68,6 +68,10 @@ import "dagger.io/dagger"
 		uid:      int | *0
 		gid:      int | *0
 		mask:     int | *0o400
+	} | {
+		type:        "file"
+		contents:    string
+		permissions: *0o644 | int
 	}
 }
 
