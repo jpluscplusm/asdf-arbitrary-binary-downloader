@@ -2,9 +2,12 @@
 
 ## UX
 
+- Special-case the installation of the CUE binary, /somehow/.
+  - FIXME: how? Make this really dumb, and /not/ generalisable.
 - Make README friendlier
   - explain the "why"
   - expain the "how" flowchart
+  - break up into different docs
 - Make it easier to contribute
   - examples
   - machine types
@@ -17,6 +20,8 @@
 
 ## Tests to add
 
+- make my local test vs /actual/ use of the tool, nicer [this is just for folks
+  dev-ing this tool!]
 - in-CUE scripts:
   - shellcheck
 - cue vet `bin/*.cue`
