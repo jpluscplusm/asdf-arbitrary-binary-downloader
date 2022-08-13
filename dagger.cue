@@ -181,7 +181,7 @@ actions: _dockerhub: {
 	shellcheck: docker.#Pull & {source: "koalaman/shellcheck-alpine:stable"}
 	debian:     docker.#Pull & {source: "debian:bullseye"}
 	cue:        docker.#Pull & {source: "cuelang/cue:latest"}
- 
+}
 
 client: filesystem: {
 	".": read: {
